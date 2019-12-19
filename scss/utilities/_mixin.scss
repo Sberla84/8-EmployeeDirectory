@@ -1,0 +1,11 @@
+@mixin mq{
+    @media (min-width: 768px){
+        @content;
+    }
+}
+
+@mixin mql{
+    @media (min-width: 1024px){
+        @content;
+    }
+}
