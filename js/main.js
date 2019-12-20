@@ -3,6 +3,11 @@ const employeesUrl = 'https://randomuser.me/api/?results=12&inc=name,location,em
 const employeeList = document.getElementById('employee-wrap');
 var employeeArray = [];
 
+
+
+// fetch data from URL
+
+
 async function createEmployeesList(url) {
     const employeesList = await fetch(url);
     const employeesJSON = await employeesList.json(); 
@@ -19,13 +24,14 @@ async function createEmployeesList(url) {
 return Promise.all(employeesTry);
 }
 
-
+// create array of returned resolved promises
 
 
 function createEmployeesArray(data) {
     data.forEach(employee => {
         let person = {};
-        person.name = employee.name.first + ' ' + employee.name.last;
+        person.name = employee.name.first;
+        person.surname = employee.name.last;
         person.image = employee.picture.thumbnail;
         person.email = employee.email;
         person.city = employee.location.city;
@@ -37,24 +43,31 @@ function createEmployeesArray(data) {
     });
 }
 
-// function generateHTML(data) {
-//     data.map( employee => {
-//         const section = document.createElement('section');
-//     employeeList.appendChild(section);
-//     section.innerHTML = `
-//       <img src=${employee.picture.thumbnail}>
-//       <h2>${employee.name.first}</h2>
-//       <p>${employee.email}</p>
-//       <p>${employee.location.city}</p>
-//     `;
-//     })
-//  }
+
+
+// generate HTML function
+
+function generateHTML(){
+    for (let x = 0; x < employeeArray.length; x++){
+        const div = document.createElement('div');
+            employeeList.appendChild(div);
+            div.innerHTML = `
+            <img src=${employeeArray[x].image}>
+            <h2>${employeeArray[x].name + ' ' + employeeArray[x].surname}</h2>
+            <p>${employeeArray[x].email}</p>
+            <p>${employeeArray[x].city}</p>
+            `;
+    }
+}
+
+
+
 
 
 createEmployeesList(employeesUrl)
     // .then( data => console.log(data))
-    // .then(generateHTML)
     .then(createEmployeesArray)
+    .then(generateHTML)
     .catch( err => console.log(err))
 
 
