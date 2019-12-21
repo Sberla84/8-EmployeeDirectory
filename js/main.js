@@ -1,5 +1,5 @@
 
-const employeesUrl = 'https://randomuser.me/api/?results=12&inc=name,location,email,phone,picture,dob&nat=us';
+const employeesUrl = 'https://randomuser.me/api/?results=12&inc=name,location,email,login,phone,picture,dob&nat=us';
 const employeeList = document.getElementById('employee-wrap');
 var employeeArray = [];
 var $search = $('.search-box');
@@ -16,11 +16,12 @@ async function createEmployeesList(url) {
         employeesTry = employeesJSON.results.map( async (employee) => {
         const name = employee.name;
         const location = employee.location;
+        const login = employee.login;
         const email = employee.email;
         const phone = employee.phone;
         const picture = employee.picture;
         const dob = employee.dob;
-        return {name, location,email,phone,picture,dob};
+        return {name, location,login,email,phone,picture,dob};
     });
 return Promise.all(employeesTry);
 }
@@ -32,7 +33,7 @@ function createEmployeesArray(data) {
     data.forEach(employee => {
         let person = {};
         person.name = employee.name.first + ' ' + employee.name.last;
-        // person.surname = employee.name.last;
+        person.login = employee.login.username;
         person.image = employee.picture.thumbnail;
         person.email = employee.email;
         person.city = employee.location.city;
@@ -71,23 +72,14 @@ createEmployeesList(employeesUrl)
 
 // filter functions
 
-// function filter() {
-//     var query = this.value.trim().toLowerCase();
-//     employeeArray.forEach(function(img) {
-//       var index = 0;
-//       if (query) {
-//        index = img.text.indexOf(query);
-//       }
-//         img.element.parentElement.style.display = index === -1 ? 'none' : '';
-//     });
-//   }
+
 
 function filter(){
     var query = this.value.trim().toLowerCase();
     for ( let j = 0; j < employeeArray.length; j++){
         let name = employeeArray[j].name.toLowerCase();
-        // let surname = employeeArray[j].surname.toLowerCase(); 
-        if ( name.indexOf(query) > -1 ){
+        let login = employeeArray[j].login.toLowerCase();
+        if ( name.indexOf(query) > -1 || login.indexOf(query) > -1){
             $('#employee-wrap').children().eq(j).show();
         } else {
             $('#employee-wrap').children().eq(j).hide();
