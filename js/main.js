@@ -4,7 +4,7 @@ const employeeList = document.getElementById('employee-wrap');
 var employeeArray = [];
 var $search = $('.search-box');
 var cache = [];
-
+const $wrap =  $('#employee-wrap');
 
 // fetch data from URL
 
@@ -31,15 +31,17 @@ return Promise.all(employeesTry);
 
 function createEmployeesArray(data) {
     data.forEach(employee => {
-        let person = {};
+        let person = {}; 
         person.name = employee.name.first + ' ' + employee.name.last;
         person.login = employee.login.username;
-        person.image = employee.picture.thumbnail;
+        person.image = employee.picture.large;
         person.email = employee.email;
         person.city = employee.location.city;
         person.phone = employee.phone;
         person.address = employee.location.street.number + ' ' + employee.location.street.name;
         person.postcode = employee.location.postcode;
+        let b = String(employee.dob.date);
+        person.bd = b.substring(0,10);
         // console.log(person);
         employeeArray.push(person);
     });
@@ -52,6 +54,7 @@ function createEmployeesArray(data) {
 function generateHTML(){
     for (let x = 0; x < employeeArray.length; x++){
         const div = document.createElement('div');
+            div.classList.add('employee-box');
             employeeList.appendChild(div);
             div.innerHTML = `
             <img src=${employeeArray[x].image}>
@@ -93,3 +96,47 @@ function filter(){
   } else {
     $search.on('keyup', filter);
   }
+
+  function createModal(ind){
+    $wrap.append('<div class="modal"> <div class="arrow-container"><span class="scroll-left">&lt </span><div class="box-employee-modal"></div><span class="scroll-right"> &gt</span></div></div>');
+    $('.box-employee-modal').append("<p class='modal-close'><strong>X</strong></p>");
+    $('.box-employee-modal').append("<img src='"+ employeeArray[ind].image + "' class='img-modal'></img>");
+    $('.box-employee-modal').append("<h2 class='name-modal'>"+ employeeArray[ind].name +"</h2>");
+    $('.box-employee-modal').append("<p class='email-modal'>"+ employeeArray[ind].email +"</p>");
+    $('.box-employee-modal').append("<p class='city-modal'>"+ employeeArray[ind].city +"</p>");
+    $('.box-employee-modal').append("<div class='border-modal'></div>");
+    $('.box-employee-modal').append("<p class='phone-modal'>"+ employeeArray[ind].phone +"</p>");
+    $('.box-employee-modal').append("<p class='adress-modal'>"+ employeeArray[ind].address +' , '+ employeeArray[ind].postcode  +"</p>");
+    $('.box-employee-modal').append("<p class='bd-modal'>"+"Birthday: "+ employeeArray[ind].bd +"</p>");
+  }
+
+  // Create modal 
+  
+  $(document).ready(function(){
+   $wrap.on("click", ".employee-box", function(){
+      let i = $(this).index();
+      createModal(i);
+    // $wrap.append('<div class="modal"> <div class="arrow-container"><span class="scroll-left">&lt </span><div class="box-employee-modal"></div><span class="scroll-right"> &gt</span></div></div>');
+    // $('.box-employee-modal').append("<p class='modal-close'><strong>X</strong></p>");
+    // $('.box-employee-modal').append("<img src='"+ employeeArray[i].image + "' class='img-modal'></img>");
+    // $('.box-employee-modal').append("<h2 class='name-modal'>"+ employeeArray[i].name +"</h2>");
+    // $('.box-employee-modal').append("<p class='email-modal'>"+ employeeArray[i].email +"</p>");
+    // $('.box-employee-modal').append("<p class='city-modal'>"+ employeeArray[i].city +"</p>");
+    // $('.box-employee-modal').append("<div class='border-modal'></div>");
+    // $('.box-employee-modal').append("<p class='phone-modal'>"+ employeeArray[i].phone +"</p>");
+    // $('.box-employee-modal').append("<p class='adress-modal'>"+ employeeArray[i].address +' , '+ employeeArray[i].postcode  +"</p>");
+    // $('.box-employee-modal').append("<p class='bd-modal'>"+"Birthday: "+ employeeArray[i].bd +"</p>");
+    $('.modal-close').on('click', function(){
+        $('.modal').delay(1000).remove();
+        });
+    
+     
+    }); 
+  });
+  $(document).ready(function(){
+  $('.scroll-left').on('click', function(){
+    $('.modal').delay(1000).remove();
+    i--;
+    createModal(2);
+});
+});
