@@ -1,10 +1,11 @@
 
-const employeesUrl = 'https://randomuser.me/api/?results=12&inc=name,location,email,login,phone,picture,dob&nat=us';
+const employeesUrl = 'https://randomuser.me/api/?results=12&inc=name,location,email,login,cell,picture,dob&nat=us';
 const employeeList = document.getElementById('employee-wrap');
 var employeeArray = [];
 var $search = $('.search-box');
 var cache = [];
 const $wrap =  $('#employee-wrap');
+var i;
 
 // fetch data from URL
 
@@ -18,7 +19,7 @@ async function createEmployeesList(url) {
         const location = employee.location;
         const login = employee.login;
         const email = employee.email;
-        const phone = employee.phone;
+        const phone = employee.cell;
         const picture = employee.picture;
         const dob = employee.dob;
         return {name, location,login,email,phone,picture,dob};
@@ -38,7 +39,7 @@ function createEmployeesArray(data) {
         person.email = employee.email;
         person.city = employee.location.city;
         person.phone = employee.phone;
-        person.address = employee.location.street.number + ' ' + employee.location.street.name;
+        person.address = employee.location.street.number + ' ' + employee.location.street.name + ' , ' + employee.location.state ;
         person.postcode = employee.location.postcode;
         let b = String(employee.dob.date);
         person.bd = b.substring(0,10);
@@ -97,6 +98,8 @@ function filter(){
     $search.on('keyup', filter);
   }
 
+//CREATE MODAL FUNCTION
+
   function createModal(ind){
     $wrap.append('<div class="modal"> <div class="arrow-container"><span class="scroll-left">&lt </span><div class="box-employee-modal"></div><span class="scroll-right"> &gt</span></div></div>');
     $('.box-employee-modal').append("<p class='modal-close'><strong>X</strong></p>");
@@ -106,37 +109,51 @@ function filter(){
     $('.box-employee-modal').append("<p class='city-modal'>"+ employeeArray[ind].city +"</p>");
     $('.box-employee-modal').append("<div class='border-modal'></div>");
     $('.box-employee-modal').append("<p class='phone-modal'>"+ employeeArray[ind].phone +"</p>");
-    $('.box-employee-modal').append("<p class='adress-modal'>"+ employeeArray[ind].address +' , '+ employeeArray[ind].postcode  +"</p>");
+    $('.box-employee-modal').append("<p class='adress-modal'>"+ employeeArray[ind].address +' '+ employeeArray[ind].postcode  +"</p>");
     $('.box-employee-modal').append("<p class='bd-modal'>"+"Birthday: "+ employeeArray[ind].bd +"</p>");
+    if (ind <= 0){
+        $('.scroll-left').hide();
+    } else if (ind >= 11){
+        $('.scroll-right').hide();
+    }
   }
 
   // Create modal 
   
   $(document).ready(function(){
    $wrap.on("click", ".employee-box", function(){
-      let i = $(this).index();
+      i = $(this).index();
       createModal(i);
-    // $wrap.append('<div class="modal"> <div class="arrow-container"><span class="scroll-left">&lt </span><div class="box-employee-modal"></div><span class="scroll-right"> &gt</span></div></div>');
-    // $('.box-employee-modal').append("<p class='modal-close'><strong>X</strong></p>");
-    // $('.box-employee-modal').append("<img src='"+ employeeArray[i].image + "' class='img-modal'></img>");
-    // $('.box-employee-modal').append("<h2 class='name-modal'>"+ employeeArray[i].name +"</h2>");
-    // $('.box-employee-modal').append("<p class='email-modal'>"+ employeeArray[i].email +"</p>");
-    // $('.box-employee-modal').append("<p class='city-modal'>"+ employeeArray[i].city +"</p>");
-    // $('.box-employee-modal').append("<div class='border-modal'></div>");
-    // $('.box-employee-modal').append("<p class='phone-modal'>"+ employeeArray[i].phone +"</p>");
-    // $('.box-employee-modal').append("<p class='adress-modal'>"+ employeeArray[i].address +' , '+ employeeArray[i].postcode  +"</p>");
-    // $('.box-employee-modal').append("<p class='bd-modal'>"+"Birthday: "+ employeeArray[i].bd +"</p>");
-    $('.modal-close').on('click', function(){
+    $wrap.on('click', '.modal-close', function(){
         $('.modal').delay(1000).remove();
         });
     
      
     }); 
   });
-  $(document).ready(function(){
-  $('.scroll-left').on('click', function(){
-    $('.modal').delay(1000).remove();
-    i--;
-    createModal(2);
-});
+
+
+// LEFT AND RIGHT ARROW FUNCTIONS
+
+
+$(document).ready(function(){
+        $wrap.on('click', '.scroll-left',function(){
+            $('.modal').delay(1000).remove();
+            i--;
+            createModal(i);
+            if (i <= 0){
+                $('.scroll-left').hide();
+            }; 
+           
+         });
+
+         $wrap.on('click', '.scroll-right',function(){
+            $('.modal').delay(1000).remove();
+            i++;
+            createModal(i);
+            if (i >= 11){
+                $('.scroll-right').hide();
+            }; 
+           
+         });
 });
